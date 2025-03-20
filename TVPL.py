@@ -139,8 +139,10 @@ cate_parents = [
 final_result = load_existing_results()
 print(f"Loaded {len(final_result)} existing results")
 
+process_id = os.getpid()
 options = webdriver.ChromeOptions()
-# options.add_argument("--headless")  # Run in headless mode
+options.add_argument("--headless")  # Run in headless mode
+options.add_argument(f"--user-data-dir=/tmp/chrome-user-data-{process_id}") 
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
