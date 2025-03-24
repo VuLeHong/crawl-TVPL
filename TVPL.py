@@ -57,6 +57,16 @@ def handle_unknown_error(driver, url):
             return False
     return True
 
+def save_error_results(results, filename="error_results.json"):
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=4)
+        print(f"✅ Results saved to {filename}")
+        return True
+    except Exception as e:
+        print(f"❌ Error saving results: {str(e)}")
+        return False
+
 # Function to save results to file
 def save_results(results, filename="final_results.json"):
     try:
@@ -70,6 +80,15 @@ def save_results(results, filename="final_results.json"):
 
 # Load existing results if available
 def load_existing_results(filename="final_results.json"):
+    try:
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return []
+    except Exception as e:
+        print(f"❌ Error loading existing results: {str(e)}")
+        return []
+def load_existing_error_results(filename="error_results.json"):
     try:
         if os.path.exists(filename):
             with open(filename, 'r', encoding='utf-8') as f:
@@ -137,6 +156,7 @@ cate_parents = [
 
 # Load existing results if available
 final_result = load_existing_results()
+error_result = load_existing_error_results()
 print(f"Loaded {len(final_result)} existing results")
 
 process_id = os.getpid()
@@ -312,8 +332,15 @@ for cate in cate_parents:
                                 'vn_file_url': vn_file_url
                             }
                             
+                                
+                                
                             # One final check before adding to results
                             if not is_duplicate(final_result, title, cate_parent, file_url, vn_file_url):
+                                if len(detail_info) == 0:
+                                    print(f"⚠️ No category details found for document: {title}")
+                                    error_result.append(result)
+                                    save_error_results(error_result)
+                                    continue  # Skip to next document if no category details found
                                 print(result)
                                 print('---------------------------------------------------')
                                 
