@@ -25,7 +25,7 @@ def login_to_site(driver):
             agree_button.click()
             print("✅ Clicked 'Đồng ý'")
         except:
-            print("⚠️ 'Đồng ý' button did not appearanyone who deserves to dieappear.")
+            print("⚠️ 'Đồng ý' button did not appear.")
         time.sleep(1)
         return True
     except Exception as e:
@@ -88,6 +88,7 @@ def load_existing_results(filename="final_results.json"):
     except Exception as e:
         print(f"❌ Error loading existing results: {str(e)}")
         return []
+
 def load_existing_error_results(filename="error_results.json"):
     try:
         if os.path.exists(filename):
@@ -167,8 +168,6 @@ options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 service = Service(executable_path="/usr/local/bin/chromedriver")
-# D:\Pythons\Python3.12\Lib\site-packages\selenium\webdriver\chrome\chromedriver.exe
-# /usr/local/bin/chromedriver
 driver = webdriver.Chrome(service=service, options=options)
 
 # Initial login
@@ -207,7 +206,7 @@ for cate in cate_parents:
         continue  # Skip to next category if error occurs
     
     # Loop through pages
-    for i in range(1, total_pages):
+    for i in range(1, total_pages + 1):  # Adjusted to include the last page
         page_url = cate_url if i == 1 else f"{cate_url}&Page={i}"
         
         print(f"\n📄 Processing page {i}/{total_pages}")
@@ -332,21 +331,23 @@ for cate in cate_parents:
                                 'vn_file_url': vn_file_url
                             }
                             
-                                
-                                
                             # One final check before adding to results
                             if not is_duplicate(final_result, title, cate_parent, file_url, vn_file_url):
                                 if len(detail_info) == 0:
                                     print(f"⚠️ No category details found for document: {title}")
-                                    error_result.append(result)
-                                    save_error_results(error_result)
+                                    # Check if this error is already in error_result
+                                    if not is_duplicate(error_result, title, cate_parent, file_url, vn_file_url):
+                                        error_result.append(result)
+                                        save_error_results(error_result)
+                                    else:
+                                        print(f"⏭️ Skipping already recorded error for document: {title}")
                                     continue  # Skip to next document if no category details found
                                 print(result)
                                 print('---------------------------------------------------')
                                 
                                 # Add to results and save immediately
                                 final_result.append(result)
-                                save_results(final_result)  # Moved save_results here
+                                save_results(final_result)
                             else:
                                 print(f"⚠️ Document appeared to be non-duplicate initially but was found to be duplicate after processing: {title}")
                                 
