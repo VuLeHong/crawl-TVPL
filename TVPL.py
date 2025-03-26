@@ -163,11 +163,12 @@ print(f"Loaded {len(final_result)} existing results")
 process_id = os.getpid()
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")  # Run in headless mode
-options.add_argument(f"--user-data-dir=/tmp/chrome-user-data-{process_id}") 
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-service = Service(executable_path="/usr/local/bin/chromedriver")
+service = Service(executable_path=r"/usr/local/bin/chromedriver")
+# D:\Pythons\Python3.12\Lib\site-packages\selenium\webdriver\chrome\chromedriver.exe
+# /usr/local/bin/chromedriver
 driver = webdriver.Chrome(service=service, options=options)
 
 # Initial login
@@ -175,7 +176,7 @@ login_success = login_to_site(driver)
 if not login_success:
     print("❌ Initial login failed. Exiting...")
     driver.quit()
-    exit(1)
+    exit(2)
 
 # Main loop for processing categories
 for cate in cate_parents:
@@ -186,7 +187,7 @@ for cate in cate_parents:
     
     # Try to access category page
     driver.get(cate_url)
-    time.sleep(1)
+    time.sleep(3)
     
     # Check for unknown error on category page
     if "unknown error" in driver.page_source.lower():
@@ -214,7 +215,7 @@ for cate in cate_parents:
         # Try to access page
         if i > 1:
             driver.get(page_url)
-            time.sleep(1)
+            time.sleep(7)
         
         # Check for unknown error on page
         if "unknown error" in driver.page_source.lower():
@@ -272,7 +273,7 @@ for cate in cate_parents:
                                     EC.element_to_be_clickable((By.XPATH, '//*[@id="ctl00_Content_ThongTinVB_SpDoanload"]'))
                                 )
                                 download_button.click()
-                                time.sleep(2)
+                                time.sleep(10)
                             except Exception as e:
                                 print(f"⚠️ Could not click download button: {str(e)}")
                                 # Continue anyway as we might still have useful information
