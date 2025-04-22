@@ -17,7 +17,7 @@ def login_to_site(driver):
         time.sleep(2)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="UserName"]'))).send_keys('TaleSolutions')
         driver.find_element(By.XPATH, '//*[@id="Password"]').send_keys('tale0000@')
-        driver.find_element(By.XPATH, '//*[@id="cmdLogin"]').click()
+        driver.find_element(By.XPATH, '//*[@id="Button1"]').click()
         try:
             agree_button = WebDriverWait(driver, 5).until(
                 EC.element_to_be_clickable((By.XPATH, '//span[text()="Đồng ý"]'))
